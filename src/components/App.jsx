@@ -80,7 +80,7 @@ function App() {
       {hasSearched && !error && (
         <ImageGallery images={images} onImageClick={openModal} />
       )}
-      {images.length % 10 == 0 && !isLoading && !error && (
+      {images.length % 10 == 0 && images.length > 0 && !isLoading && !error && (
         <LoadMoreBtn onClick={handleLoadMore} />
       )}
       <ImageModal image={pickedImage} onClose={closeModal} />
