@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
 import { FallingLines } from "react-loader-spinner";
-
 import "./App.css";
 import ImageGallery from "./ImageGallery";
 import LoadMoreBtn from "./LoadMoreBtn";
 import ImageModal from "./ImageModal";
+import ErrorMessage from "./ErrorMessage";
 
 function App() {
   const [images, setImages] = useState([]);
@@ -16,11 +15,13 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [query, setQuery] = useState("");
   const [pickedImage, setPickedImage] = useState(null);
+  const [error, setError] = useState(null);
   const apiKey = "-bkFfOktiRIdMMk9kwId863hI2S74cIjviODRnBkppE";
 
   const fetchImages = async (query) => {
     setIsLoading(true);
     setHasSearched(true);
+    setError(null);
     try {
       const response = await axios.get(
         "https://api.unsplash.com/search/photos",
@@ -34,7 +35,7 @@ function App() {
       );
       setImages((prev) => [...prev, ...response.data.results]);
     } catch (error) {
-      toast.error("Failed to fetch images. Please try again.");
+      setError("Failed to fetch images. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -75,12 +76,14 @@ function App() {
           ariaLabel="falling-lines-loading"
         />
       )}
-      {hasSearched && <ImageGallery images={images} onImageClick={openModal} />}
-      {images.length > 0 && !isLoading && (
+      {error && <ErrorMessage message={error} />}
+      {hasSearched && !error && (
+        <ImageGallery images={images} onImageClick={openModal} />
+      )}
+      {images.length > 0 && !isLoading && !error && (
         <LoadMoreBtn onClick={handleLoadMore} />
       )}
       <ImageModal image={pickedImage} onClose={closeModal} />
-      <Toaster />
     </>
   );
 }
