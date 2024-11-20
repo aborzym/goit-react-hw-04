@@ -1,6 +1,8 @@
 import css from "./ImageModal.module.css";
 import { useEffect } from "react";
 import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 const ImageModal = ({ image, onClose }) => {
   return (
     <Modal
